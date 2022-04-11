@@ -1,24 +1,19 @@
 {
-  "name": "integration_donnees",
+  "name": "integration_projet",
   "version": "1.0.0",
-  "description": "",
+  "description": "projet d'integration aux données connectées",
   "main": "index.js",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "express": "^4.17.3",
+    "fetch": "^1.1.0",
+    "node-fetch": "^3.2.3",
+    "nvm": "^0.0.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Alphatrio/Integration_donnees.git"
-  },
-  "author": "Théodore",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Alphatrio/Integration_donnees/issues"
-  },
-  "homepage": "https://github.com/Alphatrio/Integration_donnees#readme",
-  "dependencies": {
-    "express": "^4.17.3",
-    "node-dev": "^7.4.2",
-    "swagger-ui": "^4.10.3"
-  }
+  "type": "module"
 }
