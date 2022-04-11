@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Alphatrio/Integration_donnees#readme",
   "dependencies": {
     "express": "^4.17.3",
+    "node-dev": "^7.4.2",
     "swagger-ui": "^4.10.3"
   }
 }
