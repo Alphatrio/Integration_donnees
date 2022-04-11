@@ -1,0 +1,19 @@
+{
+  "name": "integration_donnees",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alphatrio/Integration_donnees.git"
+  },
+  "author": "Théodore",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alphatrio/Integration_donnees/issues"
+  },
+  "homepage": "https://github.com/Alphatrio/Integration_donnees#readme"
+}
