@@ -29,8 +29,8 @@ app.get('/', function(req, response){
 app.get('/classementslycees', function(req, response){
 	(async () => {
 
+        var allLycee = [];
 
-        var allmovies = [];
 
         for(let pagenb = 1;pagenb <= 3; pagenb++){
             console.log('Hello')
@@ -42,12 +42,12 @@ app.get('/classementslycees', function(req, response){
             else{
                 await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
             }
-            const movies = await page.evaluate(() => {
-                let movies = [];
+            const lycee = await page.evaluate(() => {
+                let lycee = [];
                 let elements = document.querySelectorAll('.c-table--housemd > tbody:nth-child(2) > tr');
                 for (ligne of elements) {
 
-                    movies.push({
+                    lycee.push({
                         lycee: ligne.querySelector('td > a').text,
                         note: ligne.querySelector('td:nth-child(1)')?.textContent,
                         2022: ligne.querySelector('td:nth-child(2)')?.textContent,
@@ -60,14 +60,14 @@ app.get('/classementslycees', function(req, response){
                         mensbac: ligne.querySelector('td:nth-child(10)')?.textContent
                     })
                 }
-                return movies;
+                return lycee;
             });
-            allmovies = allmovies.concat(movies);
+            allLycee = allLycee.concat(lycees);
             //await browser.close();
             console.log("page " + pagenb);
         }
-        // console.log(allmovies);
-        return(allmovies)
+        // console.log(allLycee);
+        return(allLycee)
 
     })();
 	response.send("ola!");
