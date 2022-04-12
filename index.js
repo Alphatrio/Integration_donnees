@@ -80,8 +80,8 @@ app.get('/aide_territoire', function(req, response){
 	  .get('https://public.opendatasoft.com/api/records/1.0/search/?dataset=demographyref-france-pop-legale-region-millesime&rows=80')
 	  .then(res => {
 	    console.log(`statusCode: ${res.status}`)
-	    console.log(res)
-	    console.log(res['data']['records'])
+	    // console.log(res)
+	    // console.log(res['data']['records'])
 	    
 
 	    res['data']['records'].forEach(element =>{
