@@ -11,6 +11,7 @@ import XLSX from "xlsx";
 import fetch from "node-fetch";
 import express from 'express';
 import axios from 'axios';
+import scrap from 'scrap.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,6 +20,12 @@ const PORT = process.env.PORT || 3000;
 app.get('/', function(request, response){
 	console.log('hello')
 	response.send('bienvenue sur mon serveur');
+})
+
+
+app.get('/classementslycees', function(request, response){
+	var dict = scrap();
+	console.log(dict)
 })
 
 
