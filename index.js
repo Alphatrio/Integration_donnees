@@ -7,11 +7,14 @@
 // import path from "path";
 // import xlsx from "node-xlsx";
 
+
 const axios = require('axios')
 const express = require('express')
 const request = require('request')
 const fs = require('fs')
 const XLSX = require('xlsx');
+const puppeteer = require('puppeteer')
+const scrap =  require('scrap.js')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +24,13 @@ const PORT = process.env.PORT || 3000;
 app.get('/', function(request, response){
 	console.log('hello')
 	response.send('bienvenue sur mon serveur');
+})
+
+
+app.get('/classementslycees', function(request, response){
+	var dict = scrap();
+	console.log(dict);
+	response.send(dict);
 })
 
 
