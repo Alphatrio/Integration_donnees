@@ -29,10 +29,11 @@ app.get('/', function(request, response){
 app.get('/classementslycees', function(req, response){
 	(async () => {
 
-        
+
         var allmovies = [];
 
         for(let pagenb = 1;pagenb <= 3; pagenb++){
+            console.log('Hello')
             const browser = await puppeteer.launch({headless: true});
             const page = await browser.newPage();
             if(pagenb == 1){
@@ -67,7 +68,7 @@ app.get('/classementslycees', function(req, response){
         }
         // console.log(allmovies);
         return(allmovies)
-        
+
     })();
 	response.send("ola!");
 })
@@ -82,7 +83,7 @@ app.get('/aide_territoire', function(req, response){
 	    console.log(`statusCode: ${res.status}`)
 	    // console.log(res)
 	    // console.log(res['data']['records'])
-	    
+
 
 	    res['data']['records'].forEach(element =>{
 	    				if (element['fields']['reg_code'] in data) {
@@ -111,7 +112,7 @@ app.get('/aide_territoire', function(req, response){
 
 
 
-app.get('/chomage', function(req, response){ 
+app.get('/chomage', function(req, response){
 	response.send("hello chomage");
 	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
 	    if(err || res.statusCode !== 200) return;
