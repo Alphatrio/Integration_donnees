@@ -7,10 +7,12 @@
 // import path from "path";
 // import xlsx from "node-xlsx";
 
-import XLSX from "xlsx";
-import fetch from "node-fetch";
-import express from 'express';
-import axios from 'axios';
+const axios = require('axios')
+const express = require('express')
+const request = require('request')
+const fs = require('fs')
+const XLSX = require('xlsx');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -64,7 +66,10 @@ app.get('/aide_territoire', function(request, response){
 
 app.get('/chomage', function(request, response){ // NE FONCTIONNE QU'EN LOCAL
 	response.send("hello chomage");
-
+	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
+	    if(err || res.statusCode !== 200) return;
+	    fs.writeFileSync('./data/chomage.xls', data);
+	});
 
 	const file = XLSX.readFile('./data/chomage.xlsx')
 	//const file = XLSX.readFile('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls') // NE FONCTIONNE PAS ---- comment récupérer le fichirer dirécement via url ? ----
