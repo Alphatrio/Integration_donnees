@@ -35,8 +35,8 @@ import puppeteer from 'puppeteer';
             return movies;
         });
         allmovies.push(movies);
-        browser.close();
-        console.log("page" + pagenb)
+        await browser.close();
+        console.log("page " + pagenb);
     }
     console.log(allmovies);
 	
