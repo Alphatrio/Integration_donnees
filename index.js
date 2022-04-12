@@ -62,7 +62,7 @@ app.get('/classementslycees', function(req, response){
                 }
                 return lycee;
             });
-            allLycee = allLycee.concat(lycees);
+            allLycee = allLycee.concat(lycee);
             //await browser.close();
             console.log("page " + pagenb);
         }
