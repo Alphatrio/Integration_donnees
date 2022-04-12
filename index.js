@@ -63,7 +63,7 @@ app.get('/classementslycees', function(req, response){
                 return movies;
             });
             allmovies = allmovies.concat(movies);
-            await browser.close();
+            //await browser.close();
             console.log("page " + pagenb);
         }
         // console.log(allmovies);
