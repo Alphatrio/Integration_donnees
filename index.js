@@ -29,8 +29,6 @@ app.get('/', function(request, response){
 
 app.get('/classementslycees', function(request, response){
 	(async () => {
-
-        
         var allmovies = [];
 
         for(let pagenb = 1;pagenb <= 3; pagenb++){
@@ -70,6 +68,7 @@ app.get('/classementslycees', function(request, response){
         return(allmovies)
         
     })();
+	response.send("ola!");
 })
 
 
