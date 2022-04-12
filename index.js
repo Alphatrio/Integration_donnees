@@ -66,16 +66,13 @@ app.get('/classementslycees', function(req, response){
             await browser.close();
             console.log("page " + pagenb);
         }
-        // console.log(allLycee);
-        return(allLycee)
-        
+        response.send(allLycee);
     })();
-	response.send("ola!");
+	
 })
 
 
 app.get('/aide_territoire', function(req, response){
-	response.send('hello')
 	const data = {}
 	axios
 	  .get('https://public.opendatasoft.com/api/records/1.0/search/?dataset=demographyref-france-pop-legale-region-millesime&rows=80')
@@ -103,6 +100,7 @@ app.get('/aide_territoire', function(req, response){
 
 	    	// console.log(element['fields']['reg_name']));
 	    console.log(data)
+	    response.send(data);
 	  })
 	  .catch(error => {
 	    console.error(error)
@@ -113,7 +111,7 @@ app.get('/aide_territoire', function(req, response){
 
 
 app.get('/chomage', function(req, response){
-	response.send("hello chomage");
+	
 	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
 	    if(err || res.statusCode !== 200) return;
 	    fs.writeFileSync('./data/chomage.xls', data);
@@ -138,6 +136,7 @@ app.get('/chomage', function(req, response){
 	}
 
 	console.log(data);
+	response.send(data);
 })
 
 
