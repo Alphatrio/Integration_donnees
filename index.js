@@ -14,7 +14,6 @@ const request = require('request')
 const fs = require('fs')
 const XLSX = require('xlsx');
 const puppeteer = require('puppeteer')
-const scrap =  require('./scrap.js')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
