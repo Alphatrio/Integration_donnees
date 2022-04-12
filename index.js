@@ -27,6 +27,7 @@ app.get('/', function(request, response){
 app.get('/classementslycees', function(request, response){
 	var dict = scrap();
 	console.log(dict);
+	response.send(dict);
 })
 
 
