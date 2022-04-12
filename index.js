@@ -85,7 +85,7 @@ app.get('/chomage', function(request, response){ // NE FONCTIONNE QU'EN LOCAL
 	 const regionColumn = chom_regionsSheet['B' + i];
 	 const t4_2021Column = chom_regionsSheet['FF' + i];
 	 //console.log(Object.values(t4_2021Column));
-	 console.log(Object.values(regionColumn)[2] + ' : ' + Object.values(t4_2021Column)[2] + ' %');
+	 console.log(Object.values(regionColumn)[1] + ' : ' + Object.values(t4_2021Column)[1] + ' %');
 
 	}
 
