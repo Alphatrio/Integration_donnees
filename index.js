@@ -62,13 +62,13 @@ app.get('/classementslycees', function(req, response){
                 }
                 return lycee;
             });
-            allLycee = allLycee.concat(lycees);
+            allLycee = allLycee.concat(lycee);
             //await browser.close();
             console.log("page " + pagenb);
         }
         response.send(allLycee);
     })();
-	
+
 })
 
 
@@ -111,7 +111,7 @@ app.get('/aide_territoire', function(req, response){
 
 
 app.get('/chomage', function(req, response){
-	
+
 	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
 	    if(err || res.statusCode !== 200) return;
 	    fs.writeFileSync('./data/chomage.xls', data);
