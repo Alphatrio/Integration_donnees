@@ -81,19 +81,21 @@ app.get('/aide_territoire', function(req, response){
 	    console.log(`statusCode: ${res.status}`)
 	    console.log(res)
 	    console.log(res['data']['records'])
+	    
+
 	    res['data']['records'].forEach(element =>{
-	    				if (element['fields']['reg_name'] in data) {
-						    if('date' in data[element['fields']['reg_name']]){
-						    	if(element['fields']['start_year'] > data[element['fields']['reg_name']]['date']){
-						    		data[element['fields']['reg_name']]['date'] = element['fields']['start_year'];
-						    		data[element['fields']['reg_name']]['pop_total'] = element['fields']['reg_pop_tot'];
+	    				if (element['fields']['reg_code'] in data) {
+						    if('date' in data[element['fields']['reg_code']]){
+						    	if(element['fields']['start_year'] > data[element['fields']['reg_code']]['date']){
+						    		data[element['fields']['reg_code']]['date'] = element['fields']['start_year'];
+						    		data[element['fields']['reg_code']]['pop_total'] = element['fields']['reg_pop_tot'];
 						    	}
 						    }
 						  }else{
-						  	data[element['fields']['reg_name']] = {}
-						  	data[element['fields']['reg_name']]['date'] = element['fields']['start_year'];
-						    data[element['fields']['reg_name']]['pop_total'] = element['fields']['reg_pop_tot'];
-						    data[element['fields']['reg_name']]['reg_code'] = element['fields']['reg_code'];
+						  	data[element['fields']['reg_code']] = {}
+						  	data[element['fields']['reg_code']]['date'] = element['fields']['start_year'];
+						    data[element['fields']['reg_code']]['pop_total'] = element['fields']['reg_pop_tot'];
+						    data[element['fields']['reg_code']]['reg_name'] = element['fields']['reg_name'];
 						  }
 						})
 
@@ -104,15 +106,11 @@ app.get('/aide_territoire', function(req, response){
 	    console.error(error)
 	  })
 
-	// const api_response = fetch('https://aides-territoires.beta.gouv.fr/api/aids/');
-	// // const api_data = await api_response.json();
-
-	// console.log(api_response);
 })
 
 
 
-app.get('/chomage', function(req, response){ // NE FONCTIONNE QU'EN LOCAL
+app.get('/chomage', function(req, response){ 
 	response.send("hello chomage");
 	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
 	    if(err || res.statusCode !== 200) return;
@@ -120,14 +118,9 @@ app.get('/chomage', function(req, response){ // NE FONCTIONNE QU'EN LOCAL
 	});
 
 	const file = XLSX.readFile('./data/chomage.xlsx')
-	//const file = XLSX.readFile('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls') // NE FONCTIONNE PAS ---- comment récupérer le fichirer dirécement via url ? ----
 
 	const sheets = file.SheetNames //stocker le nom des feuilles
 	console.log('Feuilles du fichier Excel source : ' + sheets); // afficher le nom des feuilles
-
-	// const thirdSheet = file.Sheets[sheets[2]];
-	// const ff23 = thirdSheet['FF23']; // lire une cellule spécifique
-	// console.log(Object.values(ff23)[2] + ' %')
 
 	const chom_regionsSheet = file.Sheets[sheets[2]];
 	console.log("");
@@ -140,18 +133,9 @@ app.get('/chomage', function(req, response){ // NE FONCTIONNE QU'EN LOCAL
 		data[chom_regionsSheet['A'+i]['v']]['nom'] = chom_regionsSheet['B' + i]['v']; // ..on associe le nom de la région..
 		data[chom_regionsSheet['A'+i]['v']]['taux_chomage'] = chom_regionsSheet['FF' + i]['v']; // ..et le taux de chômage du T4 2021
 
-		//var regionColumn = chom_regionsSheet['B' + i];
-		//var t4_2021Column = chom_regionsSheet['FF' + i];
-		//console.log(Object.values(t4_2021Column));
-		//console.log(Object.values(regionColumn)[1] + ' : ' + Object.values(t4_2021Column)[1] + ' %');
-	 	//console.log(Object.values(t4_2021Column));
-
 	}
 
 	console.log(data);
-
-	// https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls
-
 })
 
 
