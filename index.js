@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 
 app.get('/', function(request, response){
+	console.log('hello')
 	response.send('bienvenue sur mon serveur');
 })
 

@@ -1,13 +1,19 @@
-const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer';
 
 (async () => {
 
     
     const allmovies = []
-    for(let pagenb = 2;pagenb < 47; pagenb++){
+
+    for(let pagenb = 1;pagenb <= 47; pagenb++){
         const browser = await puppeteer.launch({headless: true});
         const page = await browser.newPage();
-        await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
+        if(pagenb == 1){
+            await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/`);
+        }
+        else{
+            await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
+        }
         const movies = await page.evaluate(() => {
             let movies = [];
             let elements = document.querySelectorAll('.c-table--housemd > tbody:nth-child(2) > tr');
