@@ -81,15 +81,21 @@ app.get('/chomage', function(request, response){ // NE FONCTIONNE QU'EN LOCAL
 	console.log('Chômage par région (T4 2021) : ' + sheets);
 	console.log("");
 
+	var data = {};
 	for(let i=5;i<24;i++) {
-	 const regionColumn = chom_regionsSheet['B' + i];
-	 const t4_2021Column = chom_regionsSheet['FF' + i];
-	 //console.log(Object.values(t4_2021Column));
-	 console.log(Object.values(regionColumn)[2] + ' : ' + Object.values(t4_2021Column)[2] + ' %');
+		data[chom_regionsSheet['A'+i]['v']] = {}; // pour chaque code de région..
+		data[chom_regionsSheet['A'+i]['v']]['nom'] = chom_regionsSheet['B' + i]['v']; // ..on associe le nom de la région..
+		data[chom_regionsSheet['A'+i]['v']]['taux_chomage'] = chom_regionsSheet['FF' + i]['v']; // ..et le taux de chômage du T4 2021
+
+		//var regionColumn = chom_regionsSheet['B' + i];
+		//var t4_2021Column = chom_regionsSheet['FF' + i];
+		//console.log(Object.values(t4_2021Column));
+		//console.log(Object.values(regionColumn)[1] + ' : ' + Object.values(t4_2021Column)[1] + ' %');
+	 	//console.log(Object.values(t4_2021Column));
 
 	}
 
-
+	console.log(data);
 
 	// https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls
 
