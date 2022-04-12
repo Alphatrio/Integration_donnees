@@ -11,6 +11,7 @@ import XLSX from "xlsx";
 import fetch from "node-fetch";
 import express from 'express';
 import axios from 'axios';
+import puppeteer  from 'puppeteer';
 import scrap from 'scrap.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,7 +26,7 @@ app.get('/', function(request, response){
 
 app.get('/classementslycees', function(request, response){
 	var dict = scrap();
-	console.log(dict)
+	console.log(dict);
 })
 
 

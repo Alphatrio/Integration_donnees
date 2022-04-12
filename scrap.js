@@ -1,6 +1,4 @@
-import puppeteer from 'puppeteer';
-
-function scrap() {
+function scrap(){
     (async () => {
 
         
@@ -43,5 +41,6 @@ function scrap() {
         return(allmovies)
         
     })();
-
+    
 }
+
