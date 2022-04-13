@@ -19,6 +19,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
+try {
+  if (!fs.existsSync('./data/chomage.xls')) {
+  	console.log('XLS DOWNLOAD')
+    request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
+	    if(err || res.statusCode !== 200) return;
+	    fs.writeFileSync('./data/chomage.xls', data);
+	});
+  }
+} catch(err) {
+  console.error(err)
+}
+
 
 app.get('/', function(req, response){
 	console.log('hello');
@@ -111,12 +123,6 @@ app.get('/aide_territoire', function(req, response){
 
 
 app.get('/chomage', function(req, response){
-
-	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
-	    if(err || res.statusCode !== 200) return;
-	    fs.writeFileSync('./data/chomage.xls', data);
-	});
-
 	const file = XLSX.readFile('./data/chomage.xlsx')
 
 	const sheets = file.SheetNames //stocker le nom des feuilles
