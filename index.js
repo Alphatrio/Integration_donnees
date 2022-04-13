@@ -117,7 +117,7 @@ app.get('/chomage', function(req, response){
 	    fs.writeFileSync('./data/chomage.xls', data);
 	});
 
-	const file = XLSX.readFile('./data/chomage.xlsx')
+	const file = XLSX.readFile('./data/chomage.xls')
 
 	const sheets = file.SheetNames //stocker le nom des feuilles
 	console.log('Feuilles du fichier Excel source : ' + sheets); // afficher le nom des feuilles
