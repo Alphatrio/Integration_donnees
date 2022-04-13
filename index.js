@@ -34,26 +34,26 @@ app.get('/dep_reg', function(req, response){
 		console.log('Guten tag 3');
 		const page = await browser.newPage();
 		console.log('Guten tag 4');
-		await page.goto('https://www.regions-departements-france.fr/');
+		await page.goto('https://fr.wikipedia.org/wiki/Liste_des_d%C3%A9partements_fran%C3%A7ais');
 		console.log('Guten tag 5');
 		const deps_regs = await page.evaluate(() => {
+			console.log('Guten tag 6');
 			let deps_regs = [];
-			let elements = document.querySelectorAll('body > div:nth-child(1) > main:nth-child(2) > article:nth-child(1) > section:nth-child(6) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(4) > tr');
-			for (ligne in elements){
-				deps_regs.push({
-					id: ligne.querySelector('th:nth-child(1)')?.textContent,
-					departement: ligne.querySelector('td:nth-child(2)')?.textContent,
-					region: ligne.querySelector('td:nth-child(3)')?.textContent
-				})
+			let elements = document.querySelectorAll('table.wikitable:nth-child(19) > tbody:nth-child(2) > tr');
+			for (ligne of elements) {
 
+				deps_regs.push({
+					id: ligne.querySelector('th:nth-child(1)').textContent,
+					departement: ligne.querySelector('td:nth-child(2)').textContent,
+					region: ligne.querySelector('td:nth-child(10)').textContent
+				})
+				
 			}
 			return deps_regs;
-		})
+		});
 		console.log(deps_regs);
 		response.send(deps_regs);
 		await browser.close();
-
-
 	})();
 
 
