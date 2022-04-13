@@ -28,13 +28,16 @@ app.get('/', function(req, response){
 
 app.get('/classementslycees', function(req, response){
 	(async () => {
-
         var allLycee = [];
-
-
         for(let pagenb = 1;pagenb <= 3; pagenb++){
             console.log('Hello')
-            const browser = await puppeteer.launch({headless: true});
+            const browser = await puppeteer.launch({
+				args: [
+				  '--no-sandbox',
+				  '--disable-setuid-sandbox',
+				],
+				headless:true
+			  });
             const page = await browser.newPage();
             if(pagenb == 1){
                 await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/`);
