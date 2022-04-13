@@ -27,50 +27,38 @@ app.get('/', function(req, response){
 
 app.get('/dep_reg', function(req, response){
 	console.log('Guten tag');
-	response.send('Guten tag');
-	(async () => {
 
-				var allLycee = [];
+	(async () =>{
+		console.log('Guten tag 2');
+		const browser = await puppeteer.launch({headless: true});
+		console.log('Guten tag 3');
+		const page = await browser.newPage();
+		console.log('Guten tag 4');
+		await page.goto('https://www.regions-departements-france.fr/');
+		console.log('Guten tag 5');
+		const deps_regs = await page.evaluate(() => {
+			let deps_regs = [];
+			let elements = document.querySelectorAll('body > div:nth-child(1) > main:nth-child(2) > article:nth-child(1) > section:nth-child(6) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(4) > tr');
+			for (ligne in elements){
+				deps_regs.push({
+					id: ligne.querySelector('th:nth-child(1)')?.textContent,
+					departement: ligne.querySelector('td:nth-child(2)')?.textContent,
+					region: ligne.querySelector('td:nth-child(3)')?.textContent
+				})
+
+			}
+			return deps_regs;
+		})
+		console.log(deps_regs);
+		response.send(deps_regs);
+		await browser.close();
 
 
-				for(let pagenb = 1;pagenb <= 3; pagenb++){
-						console.log('Hello')
-						const browser = await puppeteer.launch({headless: true});
-						const page = await browser.newPage();
-						if(pagenb == 1){
-								await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/`);
-						}
-						else{
-								await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
-						}
-						const lycee = await page.evaluate(() => {
-								let lycee = [];
-								let elements = document.querySelectorAll('.c-table--housemd > tbody:nth-child(2) > tr');
-								for (ligne of elements) {
+	})();
 
-										lycee.push({
-												lycee: ligne.querySelector('td > a').text,
-												note: ligne.querySelector('td:nth-child(1)')?.textContent,
-												2022: ligne.querySelector('td:nth-child(2)')?.textContent,
-												2021: ligne.querySelector('td:nth-child(3)')?.textContent,
-												dpt: ligne.querySelector('td:nth-child(5)')?.textContent,
-												ville: ligne.querySelector('td:nth-child(6)')?.textContent,
-												statut: ligne.querySelector('td:nth-child(7)')?.textContent,
-												presbac:  ligne.querySelector('td:nth-child(8)')?.textContent,
-												resbac: ligne.querySelector('td:nth-child(9)')?.textContent,
-												mensbac: ligne.querySelector('td:nth-child(10)')?.textContent
-										})
-								}
-								return lycee;
-						});
-						allLycee = allLycee.concat(lycee);
-						//await browser.close();
-						console.log("page " + pagenb);
-				}
-				response.send(allLycee);
-		})();
 
 	});
+
 
 
 
@@ -90,6 +78,7 @@ app.get('/classementslycees', function(req, response){
             else{
                 await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
             }
+
             const lycee = await page.evaluate(() => {
                 let lycee = [];
                 let elements = document.querySelectorAll('.c-table--housemd > tbody:nth-child(2) > tr');
