@@ -25,6 +25,27 @@ app.get('/', function(req, response){
 	response.send('bienvenue sur mon serveur');
 })
 
+app.get('/dep_reg', function(req, response){
+	console.log('Guten tag');
+	response.send('Guten tag');
+	request({
+    method: 'GET',
+    url: 'http://localhost:8000'
+	}, (err, res, body) => {
+
+    if (err) return console.error(err);
+
+    let $ = cheerio.load(body);
+
+    let title = $('title');
+
+    console.log(title.text());
+});
+
+
+
+})
+
 
 app.get('/classementslycees', function(req, response){
 	(async () => {
