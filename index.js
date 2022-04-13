@@ -14,35 +14,88 @@ const request = require('request');
 const fs = require('fs');
 const XLSX = require('xlsx');
 const puppeteer = require('puppeteer')
-const scrap =  require('./scrap.js')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 
 
-app.get('/', function(request, response){
+app.get('/', function(req, response){
 	console.log('hello');
 	response.send('bienvenue sur mon serveur');
 })
 
 
 app.get('/classementslycees', function(req, response){
+<<<<<<< HEAD
 	var dict = scrap();
 	console.log(dict);
 	//response.send("ola!");
+=======
+	(async () => {
+        var allLycee = [];
+        for(let pagenb = 1;pagenb <= 3; pagenb++){
+            console.log('Hello')
+            const browser = await puppeteer.launch({
+				args: [
+				  '--no-sandbox',
+				  '--disable-setuid-sandbox',
+				],
+				headless:true
+			  });
+            const page = await browser.newPage();
+            if(pagenb == 1){
+                await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/`);
+            }
+            else{
+                await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
+            }
+            const lycee = await page.evaluate(() => {
+                let lycee = [];
+                let elements = document.querySelectorAll('.c-table--housemd > tbody:nth-child(2) > tr');
+                for (ligne of elements) {
+
+                    lycee.push({
+                        lycee: ligne.querySelector('td > a').text,
+                        note: ligne.querySelector('td:nth-child(1)')?.textContent,
+                        2022: ligne.querySelector('td:nth-child(2)')?.textContent,
+                        2021: ligne.querySelector('td:nth-child(3)')?.textContent,
+                        dpt: ligne.querySelector('td:nth-child(5)')?.textContent,
+                        ville: ligne.querySelector('td:nth-child(6)')?.textContent,
+                        statut: ligne.querySelector('td:nth-child(7)')?.textContent,
+                        presbac:  ligne.querySelector('td:nth-child(8)')?.textContent,
+                        resbac: ligne.querySelector('td:nth-child(9)')?.textContent,
+                        mensbac: ligne.querySelector('td:nth-child(10)')?.textContent
+                    })
+                }
+                return lycee;
+            });
+            allLycee = [...allLycee, ...lycee];
+            //await browser.close();
+            console.log("page " + pagenb);
+        }
+        response.send(allLycee);
+    })();
+
+>>>>>>> 3fc75223e6a2fd9a6b44b09081b3ba235212608c
 })
 
 
 app.get('/aide_territoire', function(req, response){
-	response.send('hello')
 	const data = {}
 	axios
 	  .get('https://public.opendatasoft.com/api/records/1.0/search/?dataset=demographyref-france-pop-legale-region-millesime&rows=80')
 	  .then(res => {
 	    console.log(`statusCode: ${res.status}`)
+<<<<<<< HEAD
 	    console.log(res)
 	    console.log(res['data']['records'])
+=======
+	    // console.log(res)
+	    // console.log(res['data']['records'])
+
+
+>>>>>>> 3fc75223e6a2fd9a6b44b09081b3ba235212608c
 	    res['data']['records'].forEach(element =>{
 	    				if (element['fields']['reg_name'] in data) {
 						    if('date' in data[element['fields']['reg_name']]){
@@ -61,6 +114,7 @@ app.get('/aide_territoire', function(req, response){
 
 	    	// console.log(element['fields']['reg_name']));
 	    console.log(data)
+	    response.send(data);
 	  })
 	  .catch(error => {
 	    console.error(error)
@@ -74,15 +128,24 @@ app.get('/aide_territoire', function(req, response){
 
 
 
+<<<<<<< HEAD
 app.get('/chomage', function(req, response){ // NE FONCTIONNE QU'EN LOCAL
 	response.send("hello chomage");
+=======
+app.get('/chomage', function(req, response){
+
+>>>>>>> 3fc75223e6a2fd9a6b44b09081b3ba235212608c
 	request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
 	    if(err || res.statusCode !== 200) return;
 	    fs.writeFileSync('./data/chomage.xls', data);
 	});
 
+<<<<<<< HEAD
 	const file = XLSX.readFile('./data/chomage.xlsx')
 	//const file = XLSX.readFile('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls') // NE FONCTIONNE PAS ---- comment récupérer le fichirer dirécement via url ? ----
+=======
+	const file = XLSX.readFile('./data/chomage.xls')
+>>>>>>> 3fc75223e6a2fd9a6b44b09081b3ba235212608c
 
 	const sheets = file.SheetNames //stocker le nom des feuilles
 	console.log('Feuilles du fichier Excel source : ' + sheets); // afficher le nom des feuilles
@@ -111,9 +174,13 @@ app.get('/chomage', function(req, response){ // NE FONCTIONNE QU'EN LOCAL
 	}
 
 	console.log(data);
+<<<<<<< HEAD
 
 	// https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls
 
+=======
+	response.send(data);
+>>>>>>> 3fc75223e6a2fd9a6b44b09081b3ba235212608c
 })
 
 
