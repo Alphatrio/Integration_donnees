@@ -16,8 +16,8 @@ module.exports = {
         for (ligne of elements) {
 
           deps_regs.push({
-            id: ligne.querySelector('th:nth-child(1)')?.textContent,
             departement: ligne.querySelector('td:nth-child(2) > a')?.textContent,
+            code: ligne.querySelector('th:nth-child(1)')?.textContent,
             region: ligne.querySelector('td:nth-child(10)')?.textContent
           })
 
