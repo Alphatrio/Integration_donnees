@@ -1,11 +1,14 @@
 function scrap(){
     (async () => {
-
-        
-        var allmovies = [];
-
-        for(let pagenb = 1;pagenb <= 3; pagenb++){
-            const browser = await puppeteer.launch({headless: true});
+        var allLycee = [];
+        for(let pagenb = 1;pagenb <= 47; pagenb++){
+            const browser = await puppeteer.launch({
+				args: [
+				  '--no-sandbox',
+				  '--disable-setuid-sandbox',
+				],
+				headless:true
+			  });
             const page = await browser.newPage();
             if(pagenb == 1){
                 await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/`);
@@ -13,12 +16,12 @@ function scrap(){
             else{
                 await page.goto(`https://www.letudiant.fr/palmares/classement-lycees/page-${pagenb}`);
             }
-            const movies = await page.evaluate(() => {
-                let movies = [];
+            const lycee = await page.evaluate(() => {
+                let lycee = [];
                 let elements = document.querySelectorAll('.c-table--housemd > tbody:nth-child(2) > tr');
                 for (ligne of elements) {
 
-                    movies.push({
+                    lycee.push({
                         lycee: ligne.querySelector('td > a').text,
                         note: ligne.querySelector('td:nth-child(1)')?.textContent,
                         2022: ligne.querySelector('td:nth-child(2)')?.textContent,
@@ -31,15 +34,13 @@ function scrap(){
                         mensbac: ligne.querySelector('td:nth-child(10)')?.textContent
                     })
                 }
-                return movies;
+                return lycee;
             });
-            allmovies = allmovies.concat(movies);
-            await browser.close();
+            allLycee = [...allLycee, ...lycee];
+            //await browser.close();
             console.log("page " + pagenb);
         }
-        // console.log(allmovies);
-        return(allmovies)
-        
+        return(allLycee);
     })();
     
 }

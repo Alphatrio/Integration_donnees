@@ -8,16 +8,30 @@
 // import xlsx from "node-xlsx";
 
 
-const axios = require('axios');
-const express = require('express');
-const request = require('request');
-const fs = require('fs');
+const axios = require('axios')
+const express = require('express')
+const request = require('request')
+const fs = require('fs')
 const XLSX = require('xlsx');
 const puppeteer = require('puppeteer')
+const scrap = require('scrap.js')
+const aide = require('aide.js')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+try {
+  if (!fs.existsSync('./data/chomage.xls')) {
+  	console.log('XLS DOWNLOAD')
+    request('https://www.insee.fr/fr/statistiques/fichier/2012804/sl_etc_2021T4.xls', {encoding: null}, function(err, res, data) {
+	    if(err || res.statusCode !== 200) return;
+	    fs.writeFileSync('./data/chomage.xls', data);
+	});
+  }
+} catch(err) {
+  console.error(err)
+}
 
 
 app.get('/', function(req, response){
@@ -25,6 +39,7 @@ app.get('/', function(req, response){
 	response.send('bienvenue sur mon serveur');
 })
 
+<<<<<<< HEAD
 
 app.get('/classementslycees', function(req, response){
 	(async () => {
@@ -125,41 +140,74 @@ app.get('/chomage', function(req, response){
 	});
 
 	const file = XLSX.readFile('./data/chomage.xls')
+=======
+app.get('/dep_reg', function(req, response){
+	console.log('Guten tag');
 
-	const sheets = file.SheetNames //stocker le nom des feuilles
-	console.log('Feuilles du fichier Excel source : ' + sheets); // afficher le nom des feuilles
+	(async () =>{
+		console.log('Guten tag 2');
+		const browser = await puppeteer.launch({headless: true});
+		console.log('Guten tag 3');
+		const page = await browser.newPage();
+		console.log('Guten tag 4');
+		await page.goto('https://fr.wikipedia.org/wiki/Liste_des_d%C3%A9partements_fran%C3%A7ais');
+		await page.waitForSelector('table.wikitable:nth-child(19)')
+		console.log('Guten tag 5');
+		const deps_regs = await page.evaluate(() => {
+			console.log('Guten tag 6');
+			let deps_regs = [];
+			let elements = document.querySelectorAll('table.wikitable:nth-child(19) > tbody:nth-child(2) > tr');
+			for (ligne of elements) {
 
-	// const thirdSheet = file.Sheets[sheets[2]];
-	// const ff23 = thirdSheet['FF23']; // lire une cellule spécifique
-	// console.log(Object.values(ff23)[2] + ' %')
+				deps_regs.push({
+					id: ligne.querySelector('th:nth-child(1)')?.textContent,
+					departement: ligne.querySelector('td:nth-child(2) > a')?.textContent,
+					region: ligne.querySelector('td:nth-child(10)')?.textContent
+				})
 
-	const chom_regionsSheet = file.Sheets[sheets[2]];
-	console.log("");
-	console.log('Chômage par région (T4 2021) : ' + sheets);
-	console.log("");
+			}
+			return deps_regs;
+		});
+		console.log(deps_regs);
+		response.send(deps_regs);
+		await browser.close();
+	})();
 
-	var data = {};
-	for(let i=5;i<24;i++) {
-		data[chom_regionsSheet['A'+i]['v']] = {}; // pour chaque code de région..
-		data[chom_regionsSheet['A'+i]['v']]['nom'] = chom_regionsSheet['B' + i]['v']; // ..on associe le nom de la région..
-		data[chom_regionsSheet['A'+i]['v']]['taux_chomage'] = chom_regionsSheet['FF' + i]['v']; // ..et le taux de chômage du T4 2021
 
-		//var regionColumn = chom_regionsSheet['B' + i];
-		//var t4_2021Column = chom_regionsSheet['FF' + i];
-		//console.log(Object.values(t4_2021Column));
-		//console.log(Object.values(regionColumn)[1] + ' : ' + Object.values(t4_2021Column)[1] + ' %');
-	 	//console.log(Object.values(t4_2021Column));
+	});
 
-	}
+>>>>>>> f552ecb7780c584f21953ede0a2a54a24783bed7
 
+
+
+app.get('/classementslycees', function(req, response){
+
+	response.send(scrap());
+
+<<<<<<< HEAD
 	console.log(data);
 	response.send(data);
+=======
+})
+
+
+app.get('/aide_territoire', function(req, response){
+	response.send(aide());
+>>>>>>> f552ecb7780c584f21953ede0a2a54a24783bed7
 })
 
 
 
+app.get('/chomage', function(req, response){
+	response.send(chomage());
+})
 
-
+app.get('/join', function(req, response){
+	var scrap = scrap();
+	var aide = aide();
+	var chomage = chomage();
+	
+})
 
 
 app.listen(PORT, function(){
