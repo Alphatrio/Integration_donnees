@@ -40,19 +40,19 @@ app.get('/', function(req, response){
 })
 
 app.get('/dep_reg', function(req, response){
-	console.log('Guten tag');
+
 
 	(async () =>{
-		console.log('Guten tag 2');
+
 		const browser = await puppeteer.launch({headless: true});
-		console.log('Guten tag 3');
+
 		const page = await browser.newPage();
-		console.log('Guten tag 4');
+
 		await page.goto('https://fr.wikipedia.org/wiki/Liste_des_d%C3%A9partements_fran%C3%A7ais');
 		await page.waitForSelector('table.wikitable:nth-child(19)')
-		console.log('Guten tag 5');
+
 		const deps_regs = await page.evaluate(() => {
-			console.log('Guten tag 6');
+
 			let deps_regs = [];
 			let elements = document.querySelectorAll('table.wikitable:nth-child(19) > tbody:nth-child(2) > tr');
 			for (ligne of elements) {
@@ -98,7 +98,7 @@ app.get('/join', function(req, response){
 	var scrap = scrap();
 	var aide = aide();
 	var chomage = chomage();
-	
+
 })
 
 
