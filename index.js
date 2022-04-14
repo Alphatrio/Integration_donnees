@@ -35,6 +35,7 @@ app.get('/dep_reg', function(req, response){
 		const page = await browser.newPage();
 		console.log('Guten tag 4');
 		await page.goto('https://fr.wikipedia.org/wiki/Liste_des_d%C3%A9partements_fran%C3%A7ais');
+		await page.waitForSelector('table.wikitable:nth-child(19)')
 		console.log('Guten tag 5');
 		const deps_regs = await page.evaluate(() => {
 			console.log('Guten tag 6');
@@ -43,11 +44,11 @@ app.get('/dep_reg', function(req, response){
 			for (ligne of elements) {
 
 				deps_regs.push({
-					id: ligne.querySelector('th:nth-child(1)').textContent,
-					departement: ligne.querySelector('td:nth-child(2)').textContent,
-					region: ligne.querySelector('td:nth-child(10)').textContent
+					id: ligne.querySelector('th:nth-child(1)')?.textContent,
+					departement: ligne.querySelector('td:nth-child(2) > a')?.textContent,
+					region: ligne.querySelector('td:nth-child(10)')?.textContent
 				})
-				
+
 			}
 			return deps_regs;
 		});
