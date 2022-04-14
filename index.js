@@ -24,8 +24,35 @@ const chomage = require('./chomage')
 const dep_reg = require('./dep_reg')
 const reg_code = require('./reg_code')
 
+
+
+const swaggerUi = require('swagger-ui-express')
+const swaggerJsDoc = require('swagger-jsdoc')
+
 const app = express();
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: "Documentation de l'API ",
+            version: "1.0.0",
+            description: "Documentation des différentes routes de l'API",
+        }
+    },
+    apis: ['index.js'],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocs));
+
+
 const PORT = process.env.PORT || 3000;
+
+
+
+
 
 
 try {
@@ -95,12 +122,25 @@ try {
 }
 
 
+
+
+
 app.get('/', function(req, response){
 	console.log('hello');
 	response.send('bienvenue sur mon serveur');
 })
 
 
+/**
+ * @swagger
+ * /dep_reg:
+ *   get:
+ *     description: Retourne la liste des departements avec leurs regions
+ *     responses:
+ *       200:
+ *         description: Success
+ *
+ */
 
 app.get('/dep_reg', function(req, response){
 	fs.readFile('./data/dep_reg.json', 'utf-8', (err, data) => {
@@ -120,6 +160,19 @@ app.get('/dep_reg', function(req, response){
 	});
 
 
+
+  /**
+   * @swagger
+   * /reg_code:
+   *   get:
+   *     description: Retourne la liste des regions avec leurs codes
+   *     responses:
+   *       200:
+   *         description: Success
+   *
+   */
+
+
 	app.get('/reg_code', function(req, response){
 		fs.readFile('./data/reg_code.json', 'utf-8', (err, data) => {
 		    if (err) {
@@ -137,6 +190,16 @@ app.get('/dep_reg', function(req, response){
 
 		});
 
+    /**
+     * @swagger
+     * /classementslycees:
+     *   get:
+     *     description: Retourne la liste des lycee avec leurs departements ainsi que leurs moyennes du Bac
+     *     responses:
+     *       200:
+     *         description: Success
+     *
+     */
 
 app.get('/classementslycees', function(req, response){
 	fs.readFile('./data/lycee.json', 'utf-8', (err, data) => {
@@ -151,16 +214,47 @@ app.get('/classementslycees', function(req, response){
 	});
 })
 
+/**
+ * @swagger
+ * /aide_territoire:
+ *   get:
+ *     description: Retourne la population totale de chaque region
+ *     responses:
+ *       200:
+ *         description: Success
+ *
+ */
 
 app.get('/aide_territoire', function(req, response){
 	aide.aide_async(function(data) {response.send(data)});
 })
 
-
+/**
+ * @swagger
+ * /chomage:
+ *   get:
+ *     description: Retourne le taux de chomage pour chaque region
+ *     responses:
+ *       200:
+ *         description: Success
+ *
+ */
 
 app.get('/chomage', function(req, response){
 	response.send(chomage.chomage());
 })
+
+
+/**
+ * @swagger
+ * /join:
+ *   get:
+ *     description: Retourne la concetanation des routes precedentes pour avoir toutes les donnees en fonction des regions
+ *     responses:
+ *       200:
+ *         description: Success
+ *
+ */
 
 app.get('/join', function(req, response){
     var chomage_data = chomage.chomage();
