@@ -21,6 +21,7 @@ const puppeteer = require('puppeteer')
 const scrap = require('./scrap')
 const aide = require('./aide')
 const chomage = require('./chomage')
+const dep_reg = require('./dep_reg')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -56,44 +57,45 @@ try {
   console.error(err)
 }
 
+try {
+  if (!fs.existsSync('./data/dep_reg.json')) {
+  	dep_reg.dep_reg(function(data){
+  		const return_json = JSON.stringify(data);
+
+			// write JSON string to a file
+			fs.writeFile('./data/dep_reg.json', return_json, (err) => {
+			    if (err) {
+			        throw err;
+			    }
+			    console.log("JSON data is saved.");
+			});
+  	})
+  }
+} catch(err) {
+  console.error(err)
+}
 
 app.get('/', function(req, response){
 	console.log('hello');
 	response.send('bienvenue sur mon serveur');
 })
 
+
+
 app.get('/dep_reg', function(req, response){
+	fs.readFile('./data/dep_reg.json', 'utf-8', (err, data) => {
+	    if (err) {
+	        throw err;
+	    }
+	    // parse JSON object
+	    const dep_reg = JSON.parse(data.toString());
+
+	    // print JSON object
+	    response.send(dep_reg);
+	});
 
 
 
-	(async () =>{
-
-		const browser = await puppeteer.launch({headless: true});
-
-		const page = await browser.newPage();
-
-		await page.goto('https://fr.wikipedia.org/wiki/Liste_des_d%C3%A9partements_fran%C3%A7ais');
-		await page.waitForSelector('table.wikitable:nth-child(19)')
-
-		const deps_regs = await page.evaluate(() => {
-
-			let deps_regs = [];
-			let elements = document.querySelectorAll('table.wikitable:nth-child(19) > tbody:nth-child(2) > tr');
-			for (ligne of elements) {
-
-				deps_regs.push({
-					id: ligne.querySelector('th:nth-child(1)')?.textContent,
-					departement: ligne.querySelector('td:nth-child(2) > a')?.textContent,
-					region: ligne.querySelector('td:nth-child(10)')?.textContent
-				})
-
-			}
-			return deps_regs;
-		});
-		console.log(deps_regs);
-		response.send(deps_regs);
-		await browser.close();
-	})();
 
 	});
 
