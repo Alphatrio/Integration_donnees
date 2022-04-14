@@ -22,6 +22,7 @@ const scrap = require('./scrap')
 const aide = require('./aide')
 const chomage = require('./chomage')
 const dep_reg = require('./dep_reg')
+const reg_code = require('./reg_code')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -75,6 +76,25 @@ try {
   console.error(err)
 }
 
+try {
+  if (!fs.existsSync('./data/reg_code.json')) {
+  	reg_code.reg_code(function(data){
+  		const return_json = JSON.stringify(data);
+
+			// write JSON string to a file
+			fs.writeFile('./data/reg_code.json', return_json, (err) => {
+			    if (err) {
+			        throw err;
+			    }
+			    console.log("JSON data is saved.");
+			});
+  	})
+  }
+} catch(err) {
+  console.error(err)
+}
+
+
 app.get('/', function(req, response){
 	console.log('hello');
 	response.send('bienvenue sur mon serveur');
@@ -100,6 +120,22 @@ app.get('/dep_reg', function(req, response){
 	});
 
 
+	app.get('/reg_code', function(req, response){
+		fs.readFile('./data/reg_code.json', 'utf-8', (err, data) => {
+		    if (err) {
+		        throw err;
+		    }
+		    // parse JSON object
+		    const reg_code = JSON.parse(data.toString());
+
+		    // print JSON object
+		    response.send(reg_code);
+		});
+
+
+
+
+		});
 
 
 app.get('/classementslycees', function(req, response){
