@@ -7,6 +7,10 @@
 // import path from "path";
 // import xlsx from "node-xlsx";
 
+// import fetch from 'node-fetch';
+// import axios from 'axios';
+// import express from 'express';
+
 
 const axios = require('axios')
 const express = require('express')
@@ -14,8 +18,9 @@ const request = require('request')
 const fs = require('fs')
 const XLSX = require('xlsx');
 const puppeteer = require('puppeteer')
-const scrap = require('scrap.js')
-const aide = require('aide.js')
+const scrap = require('./scrap')
+const aide = require('./aide')
+const chomage = require('./chomage')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,6 +38,24 @@ try {
   console.error(err)
 }
 
+try {
+  if (!fs.existsSync('./data/lycee.json')) {
+  	scrap.scrap(function(data){
+  		const return_json = JSON.stringify(data);
+
+			// write JSON string to a file
+			fs.writeFile('./data/lycee.json', return_json, (err) => {
+			    if (err) {
+			        throw err;
+			    }
+			    console.log("JSON data is saved.");
+			});
+  	})
+  }
+} catch(err) {
+  console.error(err)
+}
+
 
 app.get('/', function(req, response){
 	console.log('hello');
@@ -40,6 +63,7 @@ app.get('/', function(req, response){
 })
 
 app.get('/dep_reg', function(req, response){
+
 
 
 	(async () =>{
@@ -71,35 +95,61 @@ app.get('/dep_reg', function(req, response){
 		await browser.close();
 	})();
 
-
 	});
 
 
 
 
 app.get('/classementslycees', function(req, response){
+	fs.readFile('./data/lycee.json', 'utf-8', (err, data) => {
+	    if (err) {
+	        throw err;
+	    }
+	    // parse JSON object
+	    const allLycee = JSON.parse(data.toString());
 
-	response.send(scrap());
-
+	    // print JSON object
+	    response.send(allLycee);
+	});
 })
 
 
 app.get('/aide_territoire', function(req, response){
-	response.send(aide());
+	aide.aide_async(function(data) {response.send(data)});
 })
 
 
 
 app.get('/chomage', function(req, response){
-	response.send(chomage());
+	response.send(chomage.chomage());
 })
 
 app.get('/join', function(req, response){
-	var scrap = scrap();
-	var aide = aide();
-	var chomage = chomage();
+    var chomage_data = chomage.chomage();
+    Promise.all([aide.aide_sync()]).then((values) => {
+          console.log(values[0]);
+          let aide_territoire_data = [];
+            values[0].data['records'].forEach(element =>{
+                    let temp_dic = {}
+                    temp_dic['reg_code'] = element['fields']['reg_code']
+                    temp_dic['reg_name'] = element['fields']['reg_name'];
+                    temp_dic['date'] = element['fields']['start_year'];
+                    temp_dic['pop_total'] = element['fields']['reg_pop_tot'];
+                    aide_territoire_data.push(temp_dic)
+                });
+
+          var classementLycee_data = JSON.parse(fs.readFileSync('./data/lycee.json').toString());
+
+          // console.log('AIDETERRITOIRE')
+          // console.log(aide_territoire_data[0]);
+          // console.log('chomage')
+          // console.log(chomage_data)
+          // console.log('ALLLYCEE')
+          // console.log(classementLycee_data[0])
+});
 
 })
+
 
 
 app.listen(PORT, function(){
