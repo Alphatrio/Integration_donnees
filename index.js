@@ -177,6 +177,9 @@ app.get('/join', function(req, response){
                 });
 
           var classementLycee_data = JSON.parse(fs.readFileSync('./data/lycee.json').toString());
+					var dep_reg = JSON.parse(fs.readFileSync('./data/dep_reg.json').toString());
+					var reg_code = JSON.parse(fs.readFileSync('./data/reg_code.json').toString());
+
 
           // console.log('AIDETERRITOIRE')
           // console.log(aide_territoire_data[0]);
