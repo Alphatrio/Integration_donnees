@@ -1,35 +1,34 @@
-function aide(){
-    const data = {}
-	axios
-	  .get('https://public.opendatasoft.com/api/records/1.0/search/?dataset=demographyref-france-pop-legale-region-millesime&rows=80')
-	  .then(res => {
-	    console.log(`statusCode: ${res.status}`)
-	    // console.log(res)
-	    // console.log(res['data']['records'])
+const axios = require('axios');
+
+module.exports = {
+	aide_async : async function (resolve){
+
+		axiosCall(function(data){
+				resolve(data);
+			});
+	},
+	aide_sync : function (){
+		return axios
+		  .get('https://public.opendatasoft.com/api/records/1.0/search/?dataset=demographyref-france-pop-legale-region-millesime&rows=80')
+	}
+};
 
 
-	    res['data']['records'].forEach(element =>{
-	    				if (element['fields']['reg_code'] in data) {
-						    if('date' in data[element['fields']['reg_code']]){
-						    	if(element['fields']['start_year'] > data[element['fields']['reg_code']]['date']){
-						    		data[element['fields']['reg_code']]['date'] = element['fields']['start_year'];
-						    		data[element['fields']['reg_code']]['pop_total'] = element['fields']['reg_pop_tot'];
-						    	}
-						    }
-						  }else{
-						  	data[element['fields']['reg_code']] = {}
-						  	data[element['fields']['reg_code']]['date'] = element['fields']['start_year'];
-						    data[element['fields']['reg_code']]['pop_total'] = element['fields']['reg_pop_tot'];
-						    data[element['fields']['reg_code']]['reg_name'] = element['fields']['reg_name'];
-						  }
-						})
+async function axiosCall(resolve){
+	await axios
+		  .get('https://public.opendatasoft.com/api/records/1.0/search/?dataset=demographyref-france-pop-legale-region-millesime&rows=80')
+		  .then(res => {
+		    let data = [];
+			res.data['records'].forEach(element =>{
+			    	let temp_dic = {}
+			    	temp_dic['reg_code'] = element['fields']['reg_code']
+			    	temp_dic['reg_name'] = element['fields']['reg_name'];
+			    	temp_dic['date'] = element['fields']['start_year'];
+			    	temp_dic['pop_total'] = element['fields']['reg_pop_tot'];
+			    	data.push(temp_dic)
 
-	    	// console.log(element['fields']['reg_name']));
-	    console.log(data)
-	    return(data);
-	  })
-	  .catch(error => {
-	    console.error(error)
-	  })
-
+		    	});
+		    	resolve(data);
+			  });
 }
+
