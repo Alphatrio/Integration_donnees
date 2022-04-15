@@ -137,6 +137,124 @@ app.get('/dep_reg', function(req, response){
 
 		});
 
+var get_file = function (filename) {
+	return new Promise((resolve, reject) => {
+		fs.readFile('./data/'+filename+'.json', 'utf-8', (err, data) => {
+			if (err) {
+				reject(err)
+				return
+			}
+			// parse JSON object
+			let reg_code = JSON.parse(data.toString());
+
+			resolve(reg_code)
+		});
+	});
+}
+
+var get_data = function (typedata) {
+	
+	if(typedata=='chomage')
+	{
+		return chomage.chomage();
+	}
+	return '';
+}
+
+var get_avg = function(array) {
+	let somme = 0;
+
+	if(array.length == 0) return 0;
+
+	for(let i=0; i<array.length; i++){
+		somme += array[i];
+	}
+
+
+	return somme / array.length;
+}
+
+app.get('/join_2', function(req, response){
+	
+
+	Promise.all([get_file('dep_reg'), get_file('reg_code'), get_file('lycee'), get_data('aide_territoire'),get_data('chomage')]).then((values) => {
+		
+		let dep_reg = values[0];
+		let reg_code = values[1];
+		let lycee = values[2];
+		let chomage = values[3];
+		let pop = values[4];
+
+		let lycee_upd = {};
+		for(let item of lycee)
+		{
+			let dpt = parseInt(item.dpt);
+			let note = item.note;
+
+			if(!(dpt in lycee_upd)) lycee_upd[dpt] = [];
+
+			lycee_upd[dpt].push(parseFloat(note));
+		}
+
+
+		for(let i in lycee_upd)
+		{
+			lycee_upd[i] = get_avg(lycee_upd[i]);
+		}
+
+
+		/* Préparer un object clé valeur de reg et dep */
+		let dep_reg_item = {};
+		for(let i in dep_reg)
+		{
+			dep_reg_item[dep_reg[i].region] = dep_reg[i].departement;
+			
+		}
+		//console.log(dep_reg_item);
+		/* Préparer un object clé valeur de reg_code et chomage */
+
+		let chomage_item = {};
+		for(let i in chomage)
+		{
+			chomage_item[chomage[i].reg_code] = chomage[i].taux_chomage;
+			
+		}
+		/* Préparer un object clé valeur de reg et pop */
+		let pop_reg_item = {};
+		for(let i in pop_reg_item)
+		{
+			pop_reg_item[aide_territoire[i].code] = aide_territoire[i].pop_total;
+			
+		}
+		console.log(pop_reg_item);
+		/* Corriger le code , si la reg existe dans reg de l'objet dep donc on récupère le code_reg,chomage,et pop */
+
+		for(let i in reg_code)
+		{
+			if(reg_code[i].code != undefined)
+				reg_code[i].code = reg_code[i].code.replace('\n', '');
+			
+			reg_code[i].departement = reg_code[i].region in dep_reg_item ? dep_reg_item[reg_code[i].region] : '';
+			
+			reg_code[i].moyenne = i in lycee_upd ? lycee_upd[i] : 0;
+
+			reg_code[i].chomage = reg_code[i].code in chomage_item ? chomage[i].taux_chomage : '';
+
+			reg_code[i].population = reg_code[i].code in pop_reg_item ? aide_territoire[i].population : '';
+
+		console.log(pop_reg_item);
+		}
+		
+
+		response.send(reg_code);
+	});
+
+
+
+	//let all_data = {'dep_reg':dep_reg, 'reg_code':reg_code};
+	
+
+});
 
 app.get('/classementslycees', function(req, response){
 	fs.readFile('./data/lycee.json', 'utf-8', (err, data) => {

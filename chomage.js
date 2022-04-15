@@ -3,7 +3,6 @@ const XLSX = require('xlsx');
 module.exports = {
 	chomage : function (){
 		const file = XLSX.readFile('./data/chomage.xls')
-
 		const sheets = file.SheetNames //stocker le nom des feuilles
 		console.log('Feuilles du fichier Excel source : ' + sheets); // afficher le nom des feuilles
 
