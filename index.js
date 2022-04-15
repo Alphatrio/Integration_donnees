@@ -292,6 +292,8 @@ app.get('/join', function(req, response){
     var chomage_data = chomage.chomage();
     Promise.all([aide.aide_sync()]).then((values) => {
           console.log(values[0]);
+					let reg_corres = {}
+					let dep_corres = {}
           let aide_territoire_data = [];
             values[0].data['records'].forEach(element =>{
                     let temp_dic = {}
@@ -305,8 +307,7 @@ app.get('/join', function(req, response){
           var classementLycee_data = JSON.parse(fs.readFileSync('./data/lycee.json').toString());
 					var dep_reg = JSON.parse(fs.readFileSync('./data/dep_reg.json').toString());
 					var reg_code = JSON.parse(fs.readFileSync('./data/reg_code.json').toString());
-
-
+					
           // console.log('AIDETERRITOIRE')
           // console.log(aide_territoire_data[0]);
           // console.log('chomage')
