@@ -158,6 +158,10 @@ var get_data = function (typedata) {
 	{
 		return chomage.chomage();
 	}
+	if(typedata=='aide_territoire')
+	{
+		return aide_territoire.pop_total();
+	}
 	return '';
 }
 
