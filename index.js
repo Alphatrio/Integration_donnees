@@ -259,7 +259,11 @@ app.get('/chomage', function(req, response){
 app.get('/join', function(req, response){
     var chomage_data = chomage.chomage();
     Promise.all([aide.aide_sync()]).then((values) => {
-          console.log(values[0]);
+          let dep_corres = {}
+          let reg_corres = {}
+          let final_data = {}
+          let moyenne_lycee = {}
+          let moyenne_region = {}
           let aide_territoire_data = [];
             values[0].data['records'].forEach(element =>{
                     let temp_dic = {}
@@ -275,12 +279,64 @@ app.get('/join', function(req, response){
 					var reg_code = JSON.parse(fs.readFileSync('./data/reg_code.json').toString());
 
 
-          // console.log('AIDETERRITOIRE')
-          // console.log(aide_territoire_data[0]);
-          // console.log('chomage')
-          // console.log(chomage_data)
-          // console.log('ALLLYCEE')
-          // console.log(classementLycee_data[0])
+					reg_code.forEach(element =>{
+						if(parseInt(element['code']) != 11 & parseInt(element['code']) > 0){
+							reg_corres[element['region']] = parseInt(element['code'])
+						}
+						reg_corres['Île-de-France'] = 11;
+					})
+
+					dep_reg.forEach(element =>{
+						if(parseInt(reg_corres[element['region']]) > 0){
+							dep_corres[element['code']] = reg_corres[element['region']];
+						}
+					})
+
+					classementLycee_data.forEach(element =>{
+						if(!(parseInt(element['dpt']) in moyenne_lycee)){
+							moyenne_lycee[parseInt(element['dpt'])] = {}
+							moyenne_lycee[parseInt(element['dpt'])]['somme_note'] = parseInt(element['note'])
+							moyenne_lycee[parseInt(element['dpt'])]['count_note'] = 1 
+						} else{
+							moyenne_lycee[parseInt(element['dpt'])]['somme_note'] += parseInt(element['note'])
+							moyenne_lycee[parseInt(element['dpt'])]['count_note'] += 1 
+						}
+					})
+					for (var key in moyenne_lycee) {
+						if(!(parseInt(dep_corres[moyenne_lycee[key]]) in moyenne_region)){
+							console.log(dep_corres[key])
+							moyenne_region[dep_corres[key]] = {}
+							moyenne_region[dep_corres[key]]['somme_note'] = moyenne_lycee[key]['somme_note']
+							moyenne_region[dep_corres[key]]['count_note'] = moyenne_lycee[key]['count_note']
+						}
+						else{
+							moyenne_region[dep_corres[key]]['somme_note'] += moyenne_lycee[key]['somme_note']
+							moyenne_region[dep_corres[key]]['count_note'] += moyenne_lycee[key]['count_note']
+						}
+					}
+					for (var key in moyenne_region){
+						moyenne_region[key]['moyenne'] = moyenne_region[key]['somme_note']/moyenne_region[key]['count_note']
+						if(parseInt(key) > 0){
+							final_data[key] = {'moyenne_region': moyenne_region[key]['somme_note']/moyenne_region[key]['count_note']}
+						}
+					}
+					chomage_data.forEach(element =>{
+						if(parseInt(element['reg_code']) in final_data){
+							final_data[parseInt(element['reg_code'])]['taux_chomage'] = element['taux_chomage']
+						}
+					})
+					aide_territoire_data.forEach(element =>{
+						if(parseInt(element['reg_code']) in final_data){
+							final_data[parseInt(element['reg_code'])]['pop_total'] = element['pop_total']
+						}
+					})
+					reg_code.forEach(element =>{
+						if(parseInt(element['code']) in final_data){
+							final_data[parseInt(element['code'])]['nom_region'] = element['region']
+						}
+					})
+
+          response.send(final_data);
 });
 
 })
