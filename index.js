@@ -152,15 +152,16 @@ var get_file = function (filename) {
 	});
 }
 
+var get_aide = function() {
+	return new Promise((resolve, reject) => {
+		aide.aide_async(function(data) { resolve(data)});
+	});
+}
 var get_data = function (typedata) {
 	
 	if(typedata=='chomage')
 	{
 		return chomage.chomage();
-	}
-	if(typedata=='aide_territoire')
-	{
-		return aide_territoire.pop_total();
 	}
 	return '';
 }
@@ -180,14 +181,26 @@ var get_avg = function(array) {
 
 app.get('/join_2', function(req, response){
 	
+	Promise.all([get_file('dep_reg'), 
+                get_file('reg_code'), 
+                get_file('lycee'),
+                get_data('chomage'), 
+                get_aide()
+            ]).then((values) => {
 
-	Promise.all([get_file('dep_reg'), get_file('reg_code'), get_file('lycee'), get_data('aide_territoire'),get_data('chomage')]).then((values) => {
-		
 		let dep_reg = values[0];
 		let reg_code = values[1];
 		let lycee = values[2];
 		let chomage = values[3];
 		let pop = values[4];
+
+
+		let reg_pop = {};
+		for(let item of pop)
+		{
+			let code = parseInt(item.reg_code);
+			reg_pop[code] = item.pop_total;
+		}
 
 		let lycee_upd = {};
 		for(let item of lycee)
@@ -214,23 +227,15 @@ app.get('/join_2', function(req, response){
 			dep_reg_item[dep_reg[i].region] = dep_reg[i].departement;
 			
 		}
-		//console.log(dep_reg_item);
+		console.log(dep_reg_item);
 		/* Préparer un object clé valeur de reg_code et chomage */
 
 		let chomage_item = {};
 		for(let i in chomage)
 		{
-			chomage_item[chomage[i].reg_code] = chomage[i].taux_chomage;
+			chomage_item[parseInt(chomage[i].reg_code)] = chomage[i].taux_chomage;
 			
 		}
-		/* Préparer un object clé valeur de reg et pop */
-		let pop_reg_item = {};
-		for(let i in aide_territoire)
-		{
-			pop_reg_item[aide_territoire[i].code] = aide_territoire[i].pop_total;
-			
-		}
-		console.log(pop_reg_item);
 		/* Corriger le code , si la reg existe dans reg de l'objet dep donc on récupère le code_reg,chomage,et pop */
 
 		for(let i in reg_code)
@@ -242,11 +247,10 @@ app.get('/join_2', function(req, response){
 			
 			reg_code[i].moyenne = i in lycee_upd ? lycee_upd[i] : 0;
 
-			//reg_code[i].chomage = reg_code[i].code in chomage_item ? chomage[i].taux_chomage : '';
+			reg_code[i].chomage = reg_code[i].code in chomage_item ? chomage[i].taux_chomage : '';
+			
+			reg_code[i].population = reg_code[i].code in reg_pop ? reg_pop[reg_code[i].code] : 0;
 
-			//reg_code[i].population = reg_code[i].code in pop_reg_item ? aide_territoire[i].population : '';
-
-		console.log(pop_reg_item);
 		}
 		
 
